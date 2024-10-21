@@ -1,0 +1,33 @@
+name: fleurs-slu # or your name
+channels:
+  # pytorch and nvidia need to superseed
+  # conda-forge for cuda pytorch
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pytorch=2.4.0
+  - pytorch-cuda=12.4
+  - cuda
+  - transformers
+  - datasets
+  # for deepspeed
+  - gcc
+  - cxx-compiler
+
+  # development dependencies
+  - ipython
+  - pytest
+  - debugpy
+  - pudb
+  - pyright
+  - pip
+  - ruff
+
+  - pip:
+    - wandb
+    - seqeval
+    - ruff-lsp
+    - python-Levenshtein
+    - mutagen
