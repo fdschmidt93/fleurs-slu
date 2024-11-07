@@ -1,4 +1,4 @@
-from language_mappings import LANGUAGE_MAPPING
+from language_mappings import FLEURS_TO_FLORES
 from pathlib import Path
 import pandas as pd
 from datasets import load_dataset
@@ -83,4 +83,4 @@ def main(lang, lang_folder):
 # umb_Latn - full: 1493 - exact: 1116 - miss: 0377 - min lev same as id: 0327    x  50  -- text VERY often very off
 
 lang = "arb_Arab"
-lang_folder = LANGUAGE_MAPPING[lang]
+lang_folder = FLEURS_TO_FLORES[lang]

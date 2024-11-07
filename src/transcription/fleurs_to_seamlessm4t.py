@@ -3,7 +3,7 @@ FLEURSSEAMLESSM4T = {
     "am_et": "amh",
     "ar_eg": "arz",  # Mapping Egyptian Arabic as closest
     "as_in": "asm",
-    "ast_es": "ast",
+    "ast_es": "spa",  # Asturian not supported in decoding, mapping to Spanish as closest language in terms of phonetics available
     "az_az": "azj",
     "be_by": "bel",
     "bg_bg": "bul",
@@ -42,14 +42,14 @@ FLEURSSEAMLESSM4T = {
     "ja_jp": "jpn",
     "jv_id": "jav",
     "ka_ge": "kat",
-    "kam_ke": "kam",
-    "kea_cv": "kea",
+    "kam_ke": "swh",  # Kamba not supported in decoding, mapping to Swahili as closest East African language available
+    "kea_cv": "por",  # Kabuverdianu (spoken in Cape Verde) not supported in decoding, mapping to Portuguese as closest available (the language is a creole with strong Portuguese influence)
     "kk_kz": "kaz",
     "km_kh": "khm",
     "kn_in": "kan",
     "ko_kr": "kor",
     "ky_kg": "kir",
-    "lb_lu": "ltz",
+    "lb_lu": "deu",  # Luxemburgish not supported in decoding, mapping to German as closest language available
     "lg_ug": "lug",
     "ln_cd": "lug",  # Lingala not in SeamlessM4T; mapping to a close alternative Ganda (lug)
     "lo_la": "lao",
@@ -61,7 +61,7 @@ FLEURSSEAMLESSM4T = {
     "ml_in": "mal",
     "mn_mn": "khk",  # Mapping Halh Mongolian as closest
     "mr_in": "mar",
-    "ms_my": "zsm",  # Standard Malay
+    "ms_my": "zlm",  # Standard Malay needs to be mapped to colloquial malay (seems to be misreported on SeamlessM4T README)
     "mt_mt": "mlt",
     "my_mm": "mya",
     "nb_no": "nob",
@@ -69,7 +69,7 @@ FLEURSSEAMLESSM4T = {
     "nl_nl": "nld",
     "nso_za": "zul",  # Not available in SeamlessM4T; map to closest available Zulu
     "ny_mw": "nya",
-    "oc_fr": "oci",
+    "oc_fr": "cat",  # Occitan not available in decoding, mapping to Catalan as closest relative (sort of dialectal variants) of each other
     "om_et": "gaz",  # West Central Oromo
     "or_in": "ory",
     "pa_in": "pan",
@@ -92,12 +92,12 @@ FLEURSSEAMLESSM4T = {
     "th_th": "tha",
     "tr_tr": "tur",
     "uk_ua": "ukr",
-    "umb_ao": "umb",  # Mapping closest or unlisted
+    "umb_ao": "swh",  # Mapping closest or unlisted
     "ur_pk": "urd",
     "uz_uz": "uzn",
     "vi_vn": "vie",
     "wo_sn": "fuv",  # Wolof mapped to Fulfulde
-    "xh_za": "xho",
+    "xh_za": "zul", # Xhosa not available in decoding, mapping to closest phonetic relative Zulu ('zul')
     "yo_ng": "yor",
     "yue_hant_hk": "yue",
     "zu_za": "zul",

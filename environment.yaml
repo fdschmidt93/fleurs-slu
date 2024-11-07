@@ -9,12 +9,10 @@ dependencies:
   - python=3.10
   - pytorch=2.4.0
   - pytorch-cuda=12.4
+  - torchaudio
   - cuda
   - transformers
   - datasets
-  # for deepspeed
-  - gcc
-  - cxx-compiler
 
   # development dependencies
   - ipython
@@ -26,8 +24,13 @@ dependencies:
   - ruff
 
   - pip:
-    - wandb
-    - seqeval
     - ruff-lsp
     - python-Levenshtein
     - mutagen
+    - tqdm
+    - evaluate
+    - jiwer
+    - tiktoken
+    - protobuf
+    - blobfile
+    - sentencepiece

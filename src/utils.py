@@ -38,7 +38,6 @@ def read_fleurs(path: Path) -> list[dict[str, Any]]:
     with open(path, "r") as file:
         lines = file.readlines()
     data = []
-    gender_to_id = {"MALE": 0, "FEMALE": 1, "OTHER": 2}
     for line in lines:
         (
             _id,
@@ -67,7 +66,7 @@ def read_fleurs(path: Path) -> list[dict[str, Any]]:
                 "transcription": transcription,
                 "num_samples": int(num_samples),
                 "speaker_id": speaker_id,
-                "gender": gender_to_id[gender],
+                "gender": gender,
                 # path: $FULL_PATH/de_de/dev.tsv
                 # path.stem: dev
                 "split": path.stem,

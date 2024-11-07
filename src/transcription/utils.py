@@ -21,12 +21,12 @@ def get_wav_metadata_duration(filepath: Path) -> float:
     return audio.info.length  # Duration in seconds
 
 
-def append_to_ndjson(data: list[dict[str, Any]], output_file: Path):
+def write_to_ndjson(data: list[dict[str, Any]], output_file: Path):
     """
     Appends data to a JSON Lines (NDJSON) file.
     Each entry in `data` is a dictionary that will be written as a single line in the file.
     """
-    with open(output_file, "a", encoding="utf-8") as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         for entry in data:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 

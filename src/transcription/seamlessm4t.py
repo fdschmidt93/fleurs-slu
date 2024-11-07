@@ -3,7 +3,7 @@ from pathlib import Path
 
 import torch
 from src.transcription.fleurs_to_seamlessm4t import FLEURSSEAMLESSM4T
-from src.transcription.utils import append_to_ndjson, load_audio
+from src.transcription.utils import write_to_ndjson, load_audio
 from src.utils import find_project_root
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -11,7 +11,7 @@ from transformers import AutoProcessor, SeamlessM4Tv2Model
 from functools import partial
 
 PROJECT = find_project_root(__file__)
-DATA = PROJECT / "data" / "fleurs"
+DATA = PROJECT / "data"
 
 # Initialize the model and processor
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -46,7 +46,7 @@ def process_audio(
         raise ValueError(f"Unsupported language code: {language_code}")
 
     # File structure: assuming files are stored in './data/{language_code}/audio/{split}'
-    audio_dir = DATA / language_code / "audio" / split
+    audio_dir = DATA / "fleurs" / language_code / "audio" / split
     audio_files: list[Path] = [audio_dir / file for file in audio_dir.glob("*.wav")]
 
     if not audio_files:
@@ -54,7 +54,7 @@ def process_audio(
 
     dataloader = DataLoader(
         audio_files,  # type: ignore
-        batch_size=batch_size,
+        batch_size=1,
         shuffle=False,
         pin_memory=True,
         collate_fn=partial(collate_fn, language_code=language_code),  # type: ignore
@@ -67,11 +67,28 @@ def process_audio(
         batch = batch.to(device)
         # Forward pass through the model (assumes model returns embeddings)
         with torch.inference_mode():
-            outputs = model.generate(
-                **batch,  # unpack input and attention_mask
-                tgt_lang=seamlessm4t_lang_code if not translate else "eng",
-                generate_speech=False,
-            )
+            try:
+                # Attempt to run on the default device (likely GPU)
+                global model
+                outputs = model.generate(
+                    **batch,  # unpack input and attention_mask
+                    tgt_lang=seamlessm4t_lang_code if not translate else "eng",
+                    generate_speech=False,
+                )
+            except RuntimeError as e:
+                if "out of memory" in str(e):
+                    print("GPU ran out of memory. Skipping...")
+                    del batch
+                    torch.cuda.empty_cache()  # Clear GPU memory
+                    continue
+                else:
+                    raise  # Re-raise the error if it's not OOM-related
+        # with torch.inference_mode():
+        #     outputs = model.generate(
+        #         **batch,  # unpack input and attention_mask
+        #         tgt_lang=seamlessm4t_lang_code if not translate else "eng",
+        #         generate_speech=False,
+        #     )
         translated_text_from_audio = processor.batch_decode(
             outputs[0], skip_special_tokens=True
         )
@@ -83,10 +100,13 @@ def process_audio(
     output_folder.mkdir(exist_ok=True, parents=True)
     output_file = output_folder.joinpath(f"{split}.jsonl")
     json_data = [
-        {"audio_file": file.name, "transcription": line}
+        {
+            "filename": file.name,
+            "seamlessm4t_asr_translation" if translate else "seamlessm4t_asr": line,
+        }
         for file, line in zip(audio_files, result)
     ]
-    append_to_ndjson(json_data, output_file)
+    write_to_ndjson(json_data, output_file)
 
 
 # Set up a command line interface

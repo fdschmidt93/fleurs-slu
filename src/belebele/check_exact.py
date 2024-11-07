@@ -1,4 +1,4 @@
-from language_mappings import LANGUAGE_MAPPING
+from language_mappings import FLEURS_TO_FLORES
 from pathlib import Path
 import pandas as pd
 from datasets import load_dataset
@@ -49,7 +49,7 @@ def main(lang, lang_folder):
     print(msg)
 
 
-for lang, lang_folder in LANGUAGE_MAPPING.items():
+for lang, lang_folder in FLEURS_TO_FLORES.items():
     main(lang, lang_folder)
 
 

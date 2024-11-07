@@ -5,7 +5,7 @@ from typing import cast
 
 import torch
 from src.transcription.fleurs_to_whisper import FLEURS2WHISPER
-from src.transcription.utils import append_to_ndjson, get_wav_metadata_duration
+from src.transcription.utils import write_to_ndjson, get_wav_metadata_duration
 from src.utils import find_project_root
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 
@@ -83,10 +83,10 @@ def process_audio(
             pipe(short_files, batch_size=batch_size, generate_kwargs=generate_kwargs),
         )
     json_data = [
-        {"audio_file": file.name, "transcription": r["text"]}
+        {"filename": file.name, "whisper_asr_translation" if translate else "whisper_asr": r["text"]}
         for file, r in zip(short_files, result)
     ]
-    append_to_ndjson(json_data, output_file)
+    write_to_ndjson(json_data, output_file)
 
     # Process long files individually
     with warnings.catch_warnings():
@@ -98,12 +98,12 @@ def process_audio(
         )
     json_data = [
         {
-            "audio_file": file.name,
-            "transcription": r["text"],
+            "filename": file.name,
+            "whisper_asr_translation" if translate else "whisper_asr": r["text"],
         }
         for file, r in zip(long_files, result)
     ]
-    append_to_ndjson(json_data, output_file)
+    write_to_ndjson(json_data, output_file)
 
 
 # Set up a command line interface
