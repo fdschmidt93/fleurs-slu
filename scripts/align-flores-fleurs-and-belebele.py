@@ -14,7 +14,7 @@ from typing import cast
 import pandas as pd
 import argparse
 import csv
-from datasets import Features, Audio, Sequence, Value
+from datasets import Audio, Sequence
 
 # PROJECT = find_project_root(__file__)
 # from pathlib import Path
@@ -28,7 +28,56 @@ BELEBELE_DATA_DIR = PROJECT / "data" / "belebele_asr"
 write_lock = threading.Lock()
 error_lock = threading.Lock()
 
-uploaded = { "afr_Latn", "amh_Ethi", "arb_Arab", "asm_Beng", "azj_Latn", "ben_Beng", "bul_Cyrl", "cat_Latn", "ceb_Latn", "ces_Latn", "ckb_Arab", "dan_Latn", "deu_Latn", "ell_Grek", "eng_Latn", "est_Latn", "fin_Latn", "fra_Latn", "guj_Gujr", "hau_Latn", "heb_Hebr", "hin_Deva", "hrv_Latn", "hun_Latn", "hye_Armn", "ibo_Latn", "ind_Latn", "isl_Latn", "ita_Latn", "jav_Latn", "jpn_Jpan", "kan_Knda", "kat_Geor", "kaz_Cyrl", "kea_Latn", "khm_Khmr", "kir_Cyrl", "kor_Hang", "lao_Laoo", "lit_Latn", "lug_Latn", "luo_Latn", "lvs_Latn", "mkd_Cyrl", "pes_Arab", "spa_Latn", "tgl_Latn", "zho_Hans", }
+uploaded = {
+    "afr_Latn",
+    "amh_Ethi",
+    "arb_Arab",
+    "asm_Beng",
+    "azj_Latn",
+    "ben_Beng",
+    "bul_Cyrl",
+    "cat_Latn",
+    "ceb_Latn",
+    "ces_Latn",
+    "ckb_Arab",
+    "dan_Latn",
+    "deu_Latn",
+    "ell_Grek",
+    "eng_Latn",
+    "est_Latn",
+    "fin_Latn",
+    "fra_Latn",
+    "guj_Gujr",
+    "hau_Latn",
+    "heb_Hebr",
+    "hin_Deva",
+    "hrv_Latn",
+    "hun_Latn",
+    "hye_Armn",
+    "ibo_Latn",
+    "ind_Latn",
+    "isl_Latn",
+    "ita_Latn",
+    "jav_Latn",
+    "jpn_Jpan",
+    "kan_Knda",
+    "kat_Geor",
+    "kaz_Cyrl",
+    "kea_Latn",
+    "khm_Khmr",
+    "kir_Cyrl",
+    "kor_Hang",
+    "lao_Laoo",
+    "lit_Latn",
+    "lug_Latn",
+    "luo_Latn",
+    "lvs_Latn",
+    "mkd_Cyrl",
+    "pes_Arab",
+    "spa_Latn",
+    "tgl_Latn",
+    "zho_Hans",
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -133,7 +182,9 @@ def main(args):
                         split="test",
                         data_dir=f"data/{flores_language}",
                     )
-                    print(f"{language} comprises {len(lang_dataset)} of 900 Belebele rows.")
+                    print(
+                        f"{language} comprises {len(lang_dataset)} of 900 Belebele rows."
+                    )
                     write_stats_to_csv(LOG_FILE, language, len(lang_dataset))
                 except Exception as e:
                     # Capture the error message as a string

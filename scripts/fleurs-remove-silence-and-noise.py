@@ -9,6 +9,10 @@ de_dk train 4182703406352481327.wav
 which is quite noisy but could be understood when listened to carefully.
 This script was motivated by the observations described in: https://huggingface.co/datasets/google/fleurs/discussions/16
 
+**IMPORTANT**
+
+The silent and noisy files are excluded when Flores and Fleurs are aligned in ./align-flores-and-fleurs.py
+
 Key functionalities:
 1. **Normalize Audio Loudness**: Ensures audio waveforms are normalized to a target RMS level for consistent processing.
 2. **Silence Detection**:
@@ -187,7 +191,7 @@ def write_split_log(file_path: Path, files: list[Path], silent: list[bool]) -> N
     """
     with open(file_path, "w") as f:
         for file, is_silent in zip(files, silent):
-            f.write(f"{file.name}\t{str(is_silent).lower()}\n")
+            f.write(f"{file.name}\t{str(is_silent)}\n")
 
 
 def process_lang(lang: str, splits: tuple[str, ...] = ("train", "dev", "test")) -> None:
@@ -241,12 +245,12 @@ def process_lang(lang: str, splits: tuple[str, ...] = ("train", "dev", "test")) 
             )
 
         # Create symlinks for non-silent files
-        for file, is_silent in zip(audio_files, is_silent_files):
-            if not is_silent:
-                new_path = lang_split_excl_silent_dir / file.name
-                old_path = lang_split_dir / file.name
-                assert old_path.exists()
-                new_path.symlink_to(old_path)
+        # for file, is_silent in zip(audio_files, is_silent_files):
+        #     if not is_silent:
+        #         new_path = lang_split_excl_silent_dir / file.name
+        #         old_path = lang_split_dir / file.name
+        #         assert old_path.exists()
+        #         new_path.symlink_to(old_path)
 
         # Log results
         log_summary(lang, split, sum(is_silent_files), len(is_silent_files))

@@ -1,9 +1,13 @@
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.absolute()))
+try:
+    sys.path.append(str(Path(__file__).parent.parent.absolute()))
+except:
+    pass
 
 import argparse
+import os
 import threading
 import csv
 from concurrent.futures import ThreadPoolExecutor
@@ -21,12 +25,16 @@ from src.utils import (
     remove_punctuation,
 )
 
-# PROJECT = find_project_root(__file__)
-FILE = str(Path("./create_fleurs_belebele.py").absolute())
-PROJECT = find_project_root(FILE)
+try:
+    PROJECT = find_project_root(__file__)
+except:  # type: ignore
+    # for interactive use
+    FILE = str(Path("./dummy_file.py").absolute())
+    PROJECT = find_project_root(FILE)
 LOG_FILE = PROJECT / "logs" / "flores-fleurs.csv"
 DATA_DIR = PROJECT / "data" / "flores-fleurs_raw"
 DATA_DIR.mkdir(exist_ok=True)
+NUM_WORKERS = os.cpu_count()
 
 # number of chars that may differ
 LEVENSHTEIN_THRESHOLD = 3
@@ -101,6 +109,8 @@ def parse_args() -> argparse.Namespace:
 
 def align(language: str, log_file: Path) -> Dataset:
     FLEURS_DIR = PROJECT / "data" / "fleurs" / language
+    silent_statistics_dir = PROJECT / "logs" / "fleurs-silence" / language
+
     flores_language = FLEURS_TO_FLORES[language]
 
     # Load datasets as pd.DataFrame
@@ -121,6 +131,22 @@ def align(language: str, log_file: Path) -> Dataset:
             axis=0,
         ),
     )
+    silent_dfs = []
+    for split in ("train", "dev", "test"):
+        df = pd.read_table(
+            silent_statistics_dir / f"{split}.tsv", sep="\t", header=None
+        )
+        df.columns = ["filename", "is_silent"]
+        silent_dfs.append(df)
+    silent_df = pd.concat(silent_dfs, axis=0)
+    silent_df = silent_df.drop_duplicates(["filename", "is_silent"])
+    # drop silent files
+    mask = ~silent_df["is_silent"]
+    silent_df = silent_df.loc[mask]
+    non_silent_files = set(silent_df.filename.tolist())
+    mask = fleurs_df.filename.apply(lambda file: file in non_silent_files)
+    fleurs_df = fleurs_df.loc[mask]
+
     # Aggregate the fleurs dataset by `_id` to handle one-to-many relationships
     tuple_columns = [
         "filename",
@@ -214,10 +240,6 @@ def align(language: str, log_file: Path) -> Dataset:
     NUM_MISSING_PARAGRAPHS = NUM_TOTAL_PARAGRAPHS - NUM_RETAINED_PARAGRAPHS
     fleurs_flores_df["full_paragraph"] = fleurs_flores_df["URL"].isin(urls_to_keep)  # type: ignore
 
-    # for col in ("filename", "gender", "num_samples", "speaker_id", "split"):
-    #     fleurs_flores_df[col] = fleurs_flores_df[col].apply(
-    #         lambda x: x if isinstance(x, tuple) else (x,)
-    #     )
     write_stats_to_csv(
         log_file,
         language,
@@ -238,7 +260,6 @@ def main(args):
     if args.language is None:
 
         def mapper(language):
-            # print(f"Processing {language}")
             flores_language = FLEURS_TO_FLORES[language]
             lang_dataset = align(language, LOG_FILE)
             path = DATA_DIR / f"{flores_language}.parquet"
@@ -246,7 +267,7 @@ def main(args):
             lang_dataset.to_parquet(path, index=False)
             print(f"Processed {language}")
 
-        with ThreadPoolExecutor(max_workers=16) as executor:
+        with ThreadPoolExecutor(max_workers=NUM_WORKERS) as executor:
             executor.map(mapper, FLEURS_TO_FLORES.keys())
     else:
         language = args.language
