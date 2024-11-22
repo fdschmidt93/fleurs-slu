@@ -20,7 +20,6 @@ from datasets.arrow_dataset import Dataset
 
 from concurrent.futures import ProcessPoolExecutor
 from datasets import Sequence, Audio, ClassLabel, Value
-import os
 from multiprocessing import Lock
 
 write_lock = Lock()
@@ -38,7 +37,7 @@ DATA_DIR = PROJECT / "data"
 FLEURS_ASR_DIR = DATA_DIR / "flores-fleurs_asr"
 SIB_DIR = DATA_DIR / "sib-fleurs"
 SIB_DIR.mkdir(exist_ok=True)
-NUM_WORKERS = os.cpu_count()
+NUM_WORKERS = 8
 LOG_FILE = PROJECT / "logs" / "fleurs-sib.txt"
 
 
@@ -57,9 +56,14 @@ def merge_flores_sib(language: str) -> None:
             # INFO: this fleurs version already removes the
             fleurs = pd.read_parquet(FLEURS_ASR_DIR / f"{language}.parquet")
         except:
-            write_to_log(f"Fleurs-ASR does not exist for {language}")
+            write_to_log(f"Fleurs-ASR does not exist for {language}-{split}")
             continue
-        sib = load_dataset("Davlan/sib200", flores_language, split=split).to_pandas()
+        try:
+            sib = load_dataset(
+                "Davlan/sib200", flores_language, split=split
+            ).to_pandas()
+        except:
+            write_to_log(f"SIB does not exist for {language}-{split}")
 
         # Perform the merge with indicator=True
         merged = fleurs.merge(
@@ -131,13 +135,16 @@ def merge_flores_sib(language: str) -> None:
             ),
         )
         dataset_ = dataset_.remove_columns(["full_paragraph"])
-        dataset_.push_to_hub(
-            "wuenlp/sib",
-            config_name=flores_language,
-            split=split,
-            data_dir=f"data/{flores_language}",
-        )
-        write_to_log(f"{language}\t{split}\t{len(dataset_)}/{len(sib)}")
+        try:
+            dataset_.push_to_hub(
+                "wuenlp/fleurs-sib",
+                config_name=flores_language,
+                split=split,
+                data_dir=f"data/{flores_language}",
+            )
+            write_to_log(f"{language}\t{split}\t{len(dataset_)}/{len(sib)}")
+        except:
+            write_to_log(f"Error uploading {language}\t{split}")
         print(f"{language}-{split}")
 
 
