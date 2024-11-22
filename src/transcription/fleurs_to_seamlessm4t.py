@@ -97,7 +97,7 @@ FLEURSSEAMLESSM4T = {
     "uz_uz": "uzn",
     "vi_vn": "vie",
     "wo_sn": "fuv",  # Wolof mapped to Fulfulde
-    "xh_za": "zul", # Xhosa not available in decoding, mapping to closest phonetic relative Zulu ('zul')
+    "xh_za": "zul",  # Xhosa not available in decoding, mapping to closest phonetic relative Zulu ('zul')
     "yo_ng": "yor",
     "yue_hant_hk": "yue",
     "zu_za": "zul",

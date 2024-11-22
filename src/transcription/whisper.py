@@ -83,7 +83,10 @@ def process_audio(
             pipe(short_files, batch_size=batch_size, generate_kwargs=generate_kwargs),
         )
     json_data = [
-        {"filename": file.name, "whisper_asr_translation" if translate else "whisper_asr": r["text"]}
+        {
+            "filename": file.name,
+            "whisper_asr_translation" if translate else "whisper_asr": r["text"],
+        }
         for file, r in zip(short_files, result)
     ]
     write_to_ndjson(json_data, output_file)
