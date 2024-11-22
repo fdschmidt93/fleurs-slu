@@ -67,8 +67,6 @@ def read_fleurs(path: Path) -> list[dict[str, Any]]:
                 "num_samples": int(num_samples),
                 "speaker_id": speaker_id,
                 "gender": gender,
-                # path: $FULL_PATH/de_de/dev.tsv
-                # path.stem: dev
                 "split": path.stem,
             }
         )
