@@ -75,6 +75,7 @@ def process_audio(
                     tgt_lang=seamlessm4t_lang_code if not translate else "eng",
                     generate_speech=False,
                 )
+            # INFO: one nepali sample explodes GPU RAM
             except RuntimeError as e:
                 if "out of memory" in str(e):
                     print("GPU ran out of memory. Skipping...")
@@ -83,12 +84,6 @@ def process_audio(
                     continue
                 else:
                     raise  # Re-raise the error if it's not OOM-related
-        # with torch.inference_mode():
-        #     outputs = model.generate(
-        #         **batch,  # unpack input and attention_mask
-        #         tgt_lang=seamlessm4t_lang_code if not translate else "eng",
-        #         generate_speech=False,
-        #     )
         translated_text_from_audio = processor.batch_decode(
             outputs[0], skip_special_tokens=True
         )
