@@ -31,9 +31,7 @@ The below scripts are the entry points to process the data and compile the datas
 | `compute-cer-to-flores.py`          | Computes WER and CER with Huggingface `evaluate` against the original Flores sentence.                                                                     | `flores-fleurs_asr`                               | `./logs/flores-fleurs.csv`                    |
 | `align-sib-fleurs.py`               | Merges sentence-aligned data from SIB-200 into the splits of FLEURS.                                                                                      | Uploaded to the Huggingface Hub                   | -                                             |
 | `align-fleurs-and-belebele.py`      | Merges the sentence and paragraph-aligned data from Fleurs and Belebele                                                                                   | Uploaded to the Huggingface Hub                   | -                                             |
-| `align-fleurs-sib.py`               | Merges sentence-aligned data from SIB-200 into the splits of FLEURS.                                                       | Uploaded to the Huggingface Hub                   | -                                             |
-
-When these scripts are run, relevant derived data is created in `./data/` and logs are written to `./logs`. The logs should already comprise most information (but can surely be improved).
+| `align-fleurs-sib.py`               | Merges sentence-aligned data from SIB-200 into the splits of FLEURS.                                                       | Uploaded to the Huggingface Hub                   | `./logs/fleurs-sib.txt`                                             |
 
 # Silent and Noisy File Removal
 
