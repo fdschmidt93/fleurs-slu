@@ -20,31 +20,7 @@ conda activate fleurs-slu
 
 ## Scripts
 
-```
-scripts
-├── align-fleurs-sib.py
-├── align-flores-and-fleurs.py
-├── align-flores-fleurs-and-belebele.py
-├── batch-transcribe-translate-fleurs.sh
-├── fleurs-compute-cer-to-flores.py
-├── fleurs-download-extract.py
-├── fleurs-remove-silence-and-noise.py
-├── analyse_asr.py
-└── transcribe-fleurs.sh
-```
-
-Every script comprises comments outlining the data processing.
-
-Script | description | data | logs
-
-1. `download-extract-fleurs.py`: to download and extract Fleurs in `./data/fleurs`
-1. `fleurs-remove-silence-and-noise.py`: uses Silero-VAD with multiprocessing to detect silence and noisy samples (i.e., 95% of time does not correspond to speech), logs are used in align-flores-and-fleurs to remove erroneous samples, writes logs to logs/fleurs-silence
-2. `align-flores-and-fleurs.py`: use conservative Levenshtein (at most 3 characters) on normalized strings (removed punctuation, excess whitespaces, etc.) to recover some non-exact matches
-3. `transcribe_translate_batch.sh`: transcribe (and optionally translate) with Whisper and Seamless, requires Slurm, check `src/transcription/fleurs_to_{whisper,seamlessm4t}.py` for language mappings, writes data to ./data/{whisper,seamlessm4t}/{transcription,translation} and logs to ./logs/{whisper,seamlessm4t}/
-4. `compute-cer-to-flores.py`: Compute WER and CER with Huggingface `evaluate` to original Flores sentence. Writes data to "flores-fleurs_asr" and logs to ./logs/flores-fleurs.csv
-5. `align-fleurs-sib.py`: 
-6. `align-fleurs-and-belebele.py`
-
+The below scripts are the entry points to process the data and compile the datasets. They must be ran in order of the rows in the below table.
 
 | Script                              | Description                                                                                                                                               | Data                                               | Logs                                          |
 |-------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|-----------------------------------------------|
@@ -53,8 +29,9 @@ Script | description | data | logs
 | `align-flores-and-fleurs.py`        | Uses conservative Levenshtein (at most 3 characters) on normalized strings (removed punctuation, excess whitespaces, etc.) to recover some non-exact matches. | -                                                 | -                                             |
 | `transcribe_translate_batch.sh`     | Transcribes (and optionally translates) with Whisper and Seamless. Requires Slurm. Check `src/transcription/fleurs_to_{whisper,seamlessm4t}.py` for language mappings. | `./data/{whisper,seamlessm4t}/{transcription,translation}` | `./logs/{whisper,seamlessm4t}/`              |
 | `compute-cer-to-flores.py`          | Computes WER and CER with Huggingface `evaluate` against the original Flores sentence.                                                                     | `flores-fleurs_asr`                               | `./logs/flores-fleurs.csv`                    |
-| `align-fleurs-sib.py`               | (Description missing)                                                                                                                                     | -                                                 | -                                             |
-| `align-fleurs-and-belebele.py`      | (Description missing)                                                                                                                                     | -                                                 | -                                             |
+| `align-sib-fleurs.py`               | Merges sentence-aligned data from SIB-200 into the splits of FLEURS.                                                                                      | Uploaded to the Huggingface Hub                   | -                                             |
+| `align-fleurs-and-belebele.py`      | Merges the sentence and paragraph-aligned data from Fleurs and Belebele                                                                                   | Uploaded to the Huggingface Hub                   | -                                             |
+| `align-fleurs-sib.py`               | Merges sentence-aligned data from SIB-200 into the splits of FLEURS.                                                       | Uploaded to the Huggingface Hub                   | -                                             |
 
 When these scripts are run, relevant derived data is created in `./data/` and logs are written to `./logs`. The logs should already comprise most information (but can surely be improved).
 
