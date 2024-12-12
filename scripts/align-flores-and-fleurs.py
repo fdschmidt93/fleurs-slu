@@ -1,3 +1,11 @@
+"""
+This script is merges & processs datasets from FLEURS and FLORES.
+It aligns the datasets by matching sentences and removing silent entries (cf. $PROJECT/scripts/fleurs-remove-silence-and-noise.py).
+The script calculates statistics, such as the number of exact matches, recovered matches,
+and missing entries, and writes these statistics to a log file. The results are then saved in a
+parquet format for further use.
+"""
+
 import sys
 from pathlib import Path
 
@@ -96,7 +104,7 @@ def write_stats_to_csv(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Merge and process Fleurs, Flores, and Belebele datasets."
+        description="Merge and process Fleurs and Flores datasets."
     )
     parser.add_argument(
         "--language",
@@ -108,6 +116,16 @@ def parse_args() -> argparse.Namespace:
 
 
 def align(language: str, log_file: Path) -> Dataset:
+    """
+    Align the FLEURS and FLORES datasets for a specific language.
+
+    Args:
+        language (str): FLEURS language code.
+        log_file (Path): Path to the log file for recording statistics.
+
+    Returns:
+        Dataset: Merged dataset with alignment between FLEURS and FLORES.
+    """
     FLEURS_DIR = PROJECT / "data" / "fleurs" / language
     silent_statistics_dir = PROJECT / "logs" / "fleurs-silence" / language
 
@@ -263,7 +281,7 @@ def main(args):
             flores_language = FLEURS_TO_FLORES[language]
             lang_dataset = align(language, LOG_FILE)
             path = DATA_DIR / f"{flores_language}.parquet"
-            # index=False to not store `__index_level_0__` column
+            # INFO: index=False to not store `__index_level_0__` column
             lang_dataset.to_parquet(path, index=False)
             print(f"Processed {language}")
 

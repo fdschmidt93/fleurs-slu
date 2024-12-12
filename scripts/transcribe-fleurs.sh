@@ -16,7 +16,7 @@ fi
 source "$HOME/.bashrc"
 source "$HOME/miniforge3/bin/activate" fleurs-slu
 
-project_root="/network/scratch/s/schmidtf/fleurs-slu/"
+project_root=$(pwd)
 cd "${project_root}" || exit 1
 
 # Check if the translate flag is set

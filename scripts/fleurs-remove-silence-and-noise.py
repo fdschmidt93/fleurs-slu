@@ -35,7 +35,6 @@ Key modules used:
 
 Expected directory structure:
 - Input data: Stored in `PROJECT/data/fleurs`.
-- Processed data: **Symlinked** audio to `PROJECT/data/fleurs_excl_silence`.
 - Logs: Saved in `PROJECT/logs/fleurs-silence`.
 
 Usage:
@@ -116,7 +115,7 @@ def classify_silence_with_vad(
 
     Args:
         audio_file_path (str): Path to the `.wav` audio file.
-        silence_threshold (float): Fraction of frames classified as silent to classify the whole file as silence.
+        silence_threshold (float): Fraction of time classified as silent to classify the whole file as silence.
         sampling_rate (int): Sampling rate required by the VAD model (default is 16000).
 
     Returns:
